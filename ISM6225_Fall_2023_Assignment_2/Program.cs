@@ -1,4 +1,4 @@
-﻿/* 
+/* 
  
 YOU ARE NOT ALLOWED TO MODIFY ANY FUNCTION DEFINATION's PROVIDED.
 WRITE YOUR CODE IN THE RESPECTIVE QUESTION FUNCTION BLOCK
@@ -110,16 +110,37 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         public static IList<IList<int>> FindMissingRanges(int[] nums, int lower, int upper)
         {
-            try
+            List<IList<int>> result = new List<IList<int>>();
+
+            for (int i = 0; i < nums.Length; i++)
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<IList<int>>();
-            }
-            catch (Exception)
-            {
-                throw;
+                if (nums[i] > lower)
+                {
+                    if (nums[i] == lower + 1)
+                    {
+                        result.Add(new List<int> { lower });
+                    }
+                    else
+                    {
+                        result.Add(new List<int> { lower, nums[i] - 1 });
+                    }
+                }
+                lower = nums[i] + 1;
             }
 
+            if (lower <= upper)
+            {
+                if (lower == upper)
+                {
+                    result.Add(new List<int> { lower });
+                }
+                else
+                {
+                    result.Add(new List<int> { lower, upper });
+                }
+            }
+
+            return result;
         }
 
         /*
@@ -154,15 +175,34 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         public static bool IsValid(string s)
         {
-            try
+            Stack<char> stack = new Stack<char>();
+
+            foreach (char c in s)
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return s.Length == 0;
+                if (c == '(' || c == '[' || c == '{')
+                {
+                    stack.Push(c);
+                }
+                else if (stack.Count == 0)
+                {
+                    return false;
+                }
+                char top = stack.Pop();
+                if (top == '(' && c != ')')
+                {
+                    return false;
+                }
+                else if (top == '[' && c != ']')
+                {
+                    return false;
+                }
+                else if (top == '{' && c != '}')
+                {
+                    return false;
+                }
             }
-            catch (Exception)
-            {
-                throw;
-            }
+
+            return stack.Count == 0;
         }
 
         /*
@@ -191,8 +231,31 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 1;
+                if (prices == null || prices.Length < 2)
+                {
+                    return 0; // No profit can be made with less than 2 prices.
+                }
+
+                int maxProfit = 0;
+                int minPrice = prices[0];
+
+                for (int i = 1; i < prices.Length; i++)
+                {
+                    if (prices[i] < minPrice)
+                    {
+                        minPrice = prices[i];
+                    }
+                    else
+                    {
+                        int profit = prices[i] - minPrice;
+                        if (profit > maxProfit)
+                        {
+                            maxProfit = profit;
+                        }
+                    }
+                }
+
+                return maxProfit;
             }
             catch (Exception)
             {
@@ -229,14 +292,36 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return false;
+                int left = 0;
+                int right = s.Length - 1;
+
+                while (left <= right)
+                {
+                    if (s[left] == '0' && s[right] == '0' ||
+                        s[left] == '1' && s[right] == '1' ||
+                        s[left] == '8' && s[right] == '8' ||
+                        s[left] == '6' && s[right] == '9' ||
+                        s[left] == '9' && s[right] == '6')
+                    {
+                        left++;
+                        right--;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                
+                Console.WriteLine($"An exception occurred: {ex}");
                 throw;
             }
         }
+
 
         /*
 
@@ -271,11 +356,33 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                Dictionary<int, int> countDict = new Dictionary<int, int>();
+                int goodPairs = 0;
+
+                if (nums == null)
+                {
+                    throw new ArgumentNullException("nums", "Input array cannot be null.");
+                }
+
+                foreach (int num in nums)
+                {
+                    if (countDict.ContainsKey(num))
+                    {
+                        goodPairs += countDict[num];
+                        countDict[num]++;
+                    }
+                    else
+                    {
+                        countDict[num] = 1;
+                    }
+                }
+
+                return goodPairs;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Handle the exception or log it here if needed.
+                Console.WriteLine($"An exception occurred: {ex}");
                 throw;
             }
         }
@@ -321,11 +428,45 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return 0;
+                if (nums == null || nums.Length == 0)
+                {
+                    throw new ArgumentException("Input array cannot be null or empty.");
+                }
+
+                long firstMax = long.MinValue;
+                long secondMax = long.MinValue;
+                long thirdMax = long.MinValue;
+
+                foreach (int num in nums)
+                {
+                    if (num > firstMax)
+                    {
+                        thirdMax = secondMax;
+                        secondMax = firstMax;
+                        firstMax = num;
+                    }
+                    else if (num < firstMax && num > secondMax)
+                    {
+                        thirdMax = secondMax;
+                        secondMax = num;
+                    }
+                    else if (num < secondMax && num > thirdMax)
+                    {
+                        thirdMax = num;
+                    }
+                }
+
+                if (thirdMax == long.MinValue)
+                {
+                    return (int)firstMax;
+                }
+
+                return (int)thirdMax;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Handle the exception or log it here if needed.
+                Console.WriteLine($"An exception occurred: {ex}");
                 throw;
             }
         }
@@ -354,11 +495,29 @@ namespace ISM6225_Fall_2023_Assignment_2
         {
             try
             {
-                // Write your code here and you can modify the return value according to the requirements
-                return new List<string>() { };
+                if (currentState == null)
+                {
+                    throw new ArgumentNullException(nameof(currentState), "Input cannot be null.");
+                }
+
+                List<string> possibleMoves = new List<string>();
+
+                for (int i = 0; i < currentState.Length - 1; i++)
+                {
+                    if (currentState[i] == '+' && currentState[i + 1] == '+')
+                    {
+                        // Create a new string with the "++" flipped to "--"
+                        string nextState = currentState.Substring(0, i) + "--" + currentState.Substring(i + 2);
+                        possibleMoves.Add(nextState);
+                    }
+                }
+
+                return possibleMoves;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                // Handle the exception or log it here if needed.
+                Console.WriteLine($"An exception occurred: {ex}");
                 throw;
             }
         }
@@ -383,8 +542,13 @@ namespace ISM6225_Fall_2023_Assignment_2
 
         public static string RemoveVowels(string s)
         {
-            // Write your code here and you can modify the return value according to the requirements
-            return "";
+            if (s == null)
+            {
+                return ""; // Return an empty string for null input
+            }
+
+            string result = string.Join("", s.Where(c => !"aeiouAEIOU".Contains(c)));
+            return result;
         }
 
         /* Inbuilt Functions - Don't Change the below functions */
